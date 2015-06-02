@@ -11,40 +11,83 @@
   <body>
     <div class="container" ng-controller="HistoryCtrl as history">
       <div class="history">
+
         <div class="row-fluid">
           <h4 class="col-xs-12">File History {{ history.visibility.states }}</h4>
           <notify-error></notify-error>
         </div><!-- /row -->
 
         <div class="row-fluid">
-          <div ng-repeat="edit in history.edits" class="animate">
-            <div class="line well ng-cloak">
-              <div class="cell col-xs-2">
-                {{ edit.timestamp | date : format : shortTime }}
-              </div>
-
-              <div class="cell col-xs-9 filename">
-                {{ edit.filename }}
-              </div>
-
-              <div class="cell col-xs-1 options">
-                <a href ng-click="history.remove(edit)" class="btn btn-danger" title="">x</a>
-              </div>
-
-              <div hljs source="edit.content">
-                <textarea></textarea>
-              </div>
-            </div><!-- /line -->
-
+          <div class="col-xs-2" ng-controller="UserCtrl as users">
+            <div ng-repeat="user in users.users track by $index" class="alert alert-info" style="word-break:break-all">
+            <button class="btn btn-info" ng-click="privatechat.openWindow('{{user.id}}')">Talk</button>
+              {{ user.id }}
+            </div>
           </div>
-          <div class="col-xs-12 alert alert-info"
-            ng-if="history.edits.length === 0"
-            class="animate">
-            ... aucun historique... mais que fait le prof !
+          
+          <div class="col-xs-8">
+            <div ng-repeat="edit in history.edits" class="animate">
+              <div class="line well ng-cloak">
+                <div class="row">
+                  <div class="cell col-xs-2">
+                    {{ edit.timestamp | date : format : shortTime }}
+                  </div>
+
+                  <div class="cell col-xs-9 filename">
+                    {{ edit.filename }}
+                  </div>
+
+                  <div class="cell col-xs-1 options">
+                    <a href ng-click="history.remove(edit)" class="btn btn-danger" title="">x</a>
+                  </div>
+
+                  <div class="col-xs-12">
+                      <div hljs source="edit.content">
+                        <textarea></textarea>
+                      </div>
+                  </div>
+
+                </div>
+
+              </div><!-- /line -->
+
+            </div>
+            <div class="col-xs-12 alert alert-info"
+              ng-if="history.edits.length === 0"
+              class="animate">
+              ... aucun historique... mais que fait le prof !
+            </div>
+          </div>
+
+        <div class="col-xs-1" ng-controller="ChatCtrl as chat">
+          <div id="chatConteneur">
+            <audio id="audioPlayer" src="sounds/wizz.mp3"></audio>
+            <div always-scroll-to-bottom>
+              <div ng-repeat="message in chat.messages track by $index" class="alert alert-info ng-scope">
+                <button class="btn btn-danger" ng-click="chat.deleteMessage($index)">X</button>
+                {{ message.msg }}
+              </div>
+            </div>
+              <form ng-submit="chat.wizz()" id="formWizz">
+                <input type="submit"value="Wizz" />
+              </form>
+              <form ng-submit="chat.sendMessage(chat.message)">
+                <input type="text" ng-model="chat.message" />
+              </form>
           </div>
         </div>
+      </div><!-- /row-fluid -->
+      <div class="col-xs-12" ng-controller="PrivateChatCtrl as privateChat">
+        <div ng-repeat="conversations in privateChat[{{sio.sockets.id}}]">
+      </div>
       </div><!-- / -->
     </div><!-- /container -->
+
+    <div class="col-xs-12" nb-controller="PrivateChatCtrl as private">
+      <div id="">
+        
+      </div>
+    </div>
 
   <script src="/components/angular/angular.js" type="text/javascript"></script>
   <script src="/components/angular-animate/angular-animate.js" type="text/javascript"></script>
@@ -56,9 +99,17 @@
   <script src="/components/visibilityjs/lib/visibility.core.js" type="text/javascript"></script>
   <script src="/socket.io/socket.io.js" type="text/javascript"></script>
   <script src="/app/app.js" type="text/javascript"></script>
-  <script src="/app/HistoryCtrl.js" type="text/javascript"></script>
-  <script src="/app/HistoryService.js" type="text/javascript"></script>
-  <script src="/app/SocketIOService.js" type="text/javascript"></script>
-  <script src="/app/VisibilityService.js" type="text/javascript"></script>
+  <script src="/app/Chat/ChatCtrl.js" type="text/javascript"></script>
+  <script src="/app/Chat/ChatService.js" type="text/javascript"></script>
+  <script src="/app/Chat/alwaysScrollToBottom.js" type="text/javascript"></script>
+  <script src="/app/Chat/History/ChatHistoryService.js" type="text/javascript"></script>
+  <script src="/app/File/HistoryCtrl.js" type="text/javascript"></script>
+  <script src="/app/File/HistoryService.js" type="text/javascript"></script>
+  <script src="/app/SocketIO/SocketIOService.js" type="text/javascript"></script>
+  <script src="/app/Visibility/VisibilityService.js" type="text/javascript"></script>
+  <script src="/app/User/UserService.js" type="text/javascript"></script>
+  <script src="/app/User/UserCtrl.js" type="text/javascript"></script>
+  <script src="/app/PrivateChat/PrivateChatService.js" type="text/javascript"></script>
+  <script src="/app/PrivateChat/PrivateChatCtrl.js" type="text/javascript"></script>
   </body>
 </html>
